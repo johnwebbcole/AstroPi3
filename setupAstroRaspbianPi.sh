@@ -34,7 +34,7 @@ function display
 function checkForConnection
 {
 		testCommand=$(curl -Is $2 | head -n 1)
-		if [[ "${testCommand}" == *"OK"* || "${testCommand}" == *"Moved"* ]]
+		if [[ "${testCommand}" == *"OK"* || "${testCommand}" == *"Moved"* || "${testCommand}" == *"HTTP/2 301"* || "${testCommand}" == *"HTTP/2 200"* ]]
   		then 
   			echo "$1 was found. The script can proceed."
   		else
@@ -214,6 +214,9 @@ fi
 
 # This comments out a line in Raspbian's config file that seems to prevent the desired screen resolution in VNC
 # The logic here is that if the line does exist, and if the line is not commented out, comment it out.
+# However it should be noted that this change may disable the 2nd HDMI output.
+# If you want to use your PI in a headless mode and set your own resolution, you need to run this code on a PI 4.
+# If you want to use two HDMI monitors with the PI 4, instead of going headless, you should not run this code.
 if [ -n "$(grep '^dtoverlay=vc4-kms-v3d' '/boot/config.txt')" ]
 then
 	sed -i "s/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g" /boot/config.txt
@@ -666,7 +669,7 @@ sudo chown $SUDO_USER:$SUDO_USER $USERHOME/.config/kdeglobals
 # Installs Pre Requirements for INDI
 sudo apt -y install libnova-dev libcfitsio-dev libusb-1.0-0-dev libusb-dev zlib1g-dev libgsl-dev build-essential cmake git libjpeg-dev libcurl4-gnutls-dev libtiff-dev
 sudo apt -y install libftdi-dev libgps-dev libraw-dev libdc1394-22-dev libgphoto2-dev libboost-dev libboost-regex-dev librtlsdr-dev liblimesuite-dev libftdi1-dev
-sudo apt -y install ffmpeg libavcodec-dev libavdevice-dev libfftw3-dev
+sudo apt -y install ffmpeg libavcodec-dev libavdevice-dev libfftw3-dev libev-dev
 
 #sudo apt install cdbs fxload libkrb5-dev dkms Are these needed too???
 
